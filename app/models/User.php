@@ -17,29 +17,28 @@ class User {
     }
 
     public function authenticate($username, $password) {
-        $username = strtolower($username);
-        $db = db_connect();
-        $statement = $db->prepare("SELECT * FROM users WHERE username = :name;");
-        $statement->bindValue(':name', $username);
-        $statement->execute();
-        $rows = $statement->fetch(PDO::FETCH_ASSOC);
+      session_start();
+      $username = strtolower(trim($username));
+      $db = db_connect();
 
-        if (password_verify($password, $rows['password'])) {
-            $_SESSION['auth'] = 1;
-            $_SESSION['username'] = ucwords($username);
-            unset($_SESSION['failedAuth']);
-            header('Location: /home');
-            die;
-        } else {
-            if(isset($_SESSION['failedAuth'])) {
-                $_SESSION['failedAuth']++;
-            } else {
-                $_SESSION['failedAuth'] = 1;
-            }
-            header('Location: /login');
-            die;
-        }
-    }
+      $stmt = $db->prepare("SELECT * FROM users WHERE username = :name");
+      $stmt->bindValue(':name', $username);
+      $stmt->execute();
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+      if ($row && password_verify($password, $row['password'])) {
+          $_SESSION['auth']     = 1;
+          $_SESSION['username'] = ucwords($username);
+          header('Location: /home');
+          exit;
+      }
+
+      // on any failure:
+      $_SESSION['login_error'] = 'Invalid username or password.';
+      header('Location: /login');
+      exit;
+  }
+
 
     public function create_user($username, $password)
     {
