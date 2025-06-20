@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+<?php if (session_status() === PHP_SESSION_NONE) session_start(); ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,6 +12,7 @@
         input[type="submit"] { margin-top: 20px; width: 100%; padding: 10px; background-color: #4CAF50; border: none; color: white; font-weight: bold; border-radius: 4px; cursor: pointer; }
         input[type="submit"]:hover { background-color: #45a049; }
         .error { color: red; font-weight: bold; margin-bottom: 10px; text-align: center; }
+        .success { color: green; font-weight: bold; margin-bottom: 10px; text-align: center; }
     </style>
 </head>
 <body>
@@ -23,9 +24,14 @@
             echo "<div class='error'>" . $_SESSION['signup_error'] . "</div>";
             unset($_SESSION['signup_error']);
         }
+
+        if (isset($_SESSION['message'])) {
+            echo "<div class='success'>" . $_SESSION['message'] . "</div>";
+            unset($_SESSION['message']);
+        }
         ?>
 
-        <form action="process_signup.php" method="post">
+        <form action="/signup/register" method="post">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
 
@@ -39,7 +45,7 @@
         </form>
 
         <p style="text-align:center;margin-top:10px;">
-            <a href="login.php">Already have an account?</a>
+            <a href="/login">Already have an account?</a>
         </p>
     </div>
 </body>
