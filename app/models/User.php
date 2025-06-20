@@ -16,28 +16,64 @@ class User {
         return $rows;
     }
 
-    public function authenticate($username, $password) {
-      session_start();
+  public function authenticate($username, $password) {
+     
       $username = strtolower(trim($username));
       $db = db_connect();
 
-      $stmt = $db->prepare("SELECT * FROM users WHERE username = :name");
-      $stmt->bindValue(':name', $username);
+      //count bad attempts in last 60s
+      $lockStmt = $db->prepare("
+          SELECT 
+            COUNT(*) AS bad_count,
+            MAX(timestamp) AS last_bad
+          FROM login_logs
+          WHERE username = :u
+            AND status = 'bad'
+            AND timestamp > DATE_SUB(NOW(), INTERVAL 60 SECOND)
+      ");
+      $lockStmt->bindValue(':u', $username);
+      $lockStmt->execute();
+      $lockInfo = $lockStmt->fetch(PDO::FETCH_ASSOC);
+
+      if ($lockInfo['bad_count'] >= 3) {
+          $elapsed = time() - strtotime($lockInfo['last_bad']);
+          $wait    = 60 - $elapsed;
+          $_SESSION['login_error'] = "Too many failed attempts. Try again in {$wait}s.";
+          header('Location: /login');
+          exit;
+      }
+
+      //FETCH USER RECORD
+      $stmt = $db->prepare("SELECT password FROM users WHERE username = :u");
+      $stmt->bindValue(':u', $username);
       $stmt->execute();
       $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-      if ($row && password_verify($password, $row['password'])) {
+      //VERIFY PASSWORD
+      $isGood = $row && password_verify($password, $row['password']);
+
+      //LOG THE ATTEMPT
+      $logStmt = $db->prepare("
+          INSERT INTO login_logs (username, status)
+          VALUES (:u, :s)
+      ");
+      $logStmt->bindValue(':u', $username);
+      $logStmt->bindValue(':s', $isGood ? 'good' : 'bad');
+      $logStmt->execute();
+
+      //REDIRECT BASED ON RESULT
+      if ($isGood) {
           $_SESSION['auth']     = 1;
           $_SESSION['username'] = ucwords($username);
           header('Location: /home');
           exit;
       }
 
-      // on any failure:
       $_SESSION['login_error'] = 'Invalid username or password.';
       header('Location: /login');
       exit;
   }
+
 
 
     public function create_user($username, $password)
