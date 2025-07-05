@@ -17,7 +17,7 @@ class User {
     }
 
   public function authenticate($username, $password) {
-     
+
       $username = strtolower(trim($username));
       $db = db_connect();
 
@@ -44,7 +44,7 @@ class User {
       }
 
       //FETCH USER RECORD
-      $stmt = $db->prepare("SELECT password FROM users WHERE username = :u");
+      $stmt = $db->prepare("SELECT id, password FROM users WHERE username = :u");
       $stmt->bindValue(':u', $username);
       $stmt->execute();
       $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -65,6 +65,7 @@ class User {
       if ($isGood) {
           $_SESSION['auth']     = 1;
           $_SESSION['username'] = ucwords($username);
+          $_SESSION['user_id'] = $row['id'];
           header('Location: /home');
           exit;
       }

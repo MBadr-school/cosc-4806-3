@@ -10,7 +10,7 @@ define('LIBS', ROOT . DS . 'lib');
 define('MODELS', ROOT . DS . 'models');
 define('VIEWS', ROOT . DS . 'views');
 define('CONTROLLERS', ROOT . DS . 'controllers');
-define('LOGS', ROOT . DS . 'logs');	
+define('LOGS', ROOT . DS . 'logs');
 define('FILES', ROOT . DS. 'files');
 
 // ---------------------  NEW DATABASE TABLE -------------------------
