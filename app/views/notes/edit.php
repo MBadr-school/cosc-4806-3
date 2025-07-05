@@ -9,21 +9,26 @@
 <?php endif; ?>
 
 <form action="/notes/edit/<?= $data['note']['id']; ?>" method="post">
-  <div>
-    <label for="subject">Subject</label><br>
+  <div class="mb-3">
+    <label for="subject" class="form-label">Subject</label>
     <input
       type="text"
       id="subject"
       name="subject"
+      class="form-control"
       value="<?= htmlspecialchars($data['note']['subject']); ?>"
       required>
   </div>
-  <div>
-    <label for="content">Details</label><br>
-    <textarea id="content" name="content"><?= htmlspecialchars($data['note']['content']); ?></textarea>
+  <div class="mb-3">
+    <label for="content" class="form-label">Details</label>
+    <textarea
+      id="content"
+      name="content"
+      class="form-control"
+      rows="4"><?= htmlspecialchars($data['note']['content']); ?></textarea>
   </div>
-  <button type="submit">Save</button>
-  <a href="/notes">Cancel</a>
+  <button type="submit" class="btn btn-primary">Save</button>
+  <a href="/notes" class="btn btn-secondary">Cancel</a>
 </form>
 
 <?php require APPROOT.'/views/templates/footer.php'; ?>
