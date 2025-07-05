@@ -18,7 +18,6 @@ class Notes extends Controller {
     public function create() {
         $uid   = $this->ensureLoggedIn();
         $model = $this->model('Note');
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $subj = trim($_POST['subject'] ?? '');
             $cont = trim($_POST['content'] ?? '');
@@ -36,14 +35,12 @@ class Notes extends Controller {
             header('Location: /notes/create');
             exit;
         }
-
         $this->view('notes/create');
     }
 
     public function edit($id) {
         $uid   = $this->ensureLoggedIn();
         $model = $this->model('Note');
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $subj = trim($_POST['subject'] ?? '');
             $cont = trim($_POST['content'] ?? '');
@@ -61,7 +58,6 @@ class Notes extends Controller {
             header("Location: /notes/edit/$id");
             exit;
         }
-
         $note = $model->getNoteById($id, $uid);
         if (!$note) {
             header('Location: /notes');
@@ -73,9 +69,11 @@ class Notes extends Controller {
     public function delete($id) {
         $uid   = $this->ensureLoggedIn();
         $model = $this->model('Note');
-        $model->deleteNote($id, $uid)
-            ? $_SESSION['success'] = 'Deleted'
-            : $_SESSION['error']   = 'Delete failed';
+        if ($model->deleteNote($id, $uid)) {
+            $_SESSION['success'] = 'Reminder deleted';
+        } else {
+            $_SESSION['error'] = 'Delete failed';
+        }
         header('Location: /notes');
         exit;
     }
