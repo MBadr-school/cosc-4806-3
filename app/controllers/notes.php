@@ -1,85 +1,68 @@
 <?php
-
 class Notes extends Controller {
-
-    // List all
-    public function index() {
+    private function ensureLoggedIn() {
         if (!isset($_SESSION['auth'])) {
             header('Location: /login');
             exit;
         }
-        $noteModel = $this->model('Note');
-        $user_id   = $_SESSION['user_id'];
-        $notes     = $noteModel->getNotesByUser($user_id);
+        return $_SESSION['user_id'];
+    }
+
+    public function index() {
+        $uid   = $this->ensureLoggedIn();
+        $model = $this->model('Note');
+        $notes = $model->getNotesByUser($uid);
         $this->view('notes/index', ['notes' => $notes]);
     }
 
-    // Create (GET shows form; POST processes it)
     public function create() {
-        if (!isset($_SESSION['auth'])) {
-            header('Location: /login');
-            exit;
-        }
-        $noteModel = $this->model('Note');
-        $user_id   = $_SESSION['user_id'];
+        $uid   = $this->ensureLoggedIn();
+        $model = $this->model('Note');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $subject = trim($_POST['subject'] ?? '');
-            $content = trim($_POST['content'] ?? '');
-
-            if (empty($subject)) {
+            $subj = trim($_POST['subject'] ?? '');
+            $cont = trim($_POST['content'] ?? '');
+            if (!$subj) {
                 $_SESSION['error'] = 'Subject is required';
                 header('Location: /notes/create');
                 exit;
             }
-
-            if ($noteModel->createNote($user_id, $subject, $content)) {
-                $_SESSION['success'] = 'Reminder created.';
+            if ($model->createNote($uid, $subj, $cont)) {
+                $_SESSION['success'] = 'Reminder created';
                 header('Location: /notes');
                 exit;
-            } else {
-                $_SESSION['error'] = 'Failed to create reminder.';
-                header('Location: /notes/create');
-                exit;
             }
+            $_SESSION['error'] = 'Failed to create';
+            header('Location: /notes/create');
+            exit;
         }
 
-        // GET
         $this->view('notes/create');
     }
 
-    // Edit (GET shows form; POST updates)
     public function edit($id) {
-        if (!isset($_SESSION['auth'])) {
-            header('Location: /login');
-            exit;
-        }
-        $noteModel = $this->model('Note');
-        $user_id   = $_SESSION['user_id'];
+        $uid   = $this->ensureLoggedIn();
+        $model = $this->model('Note');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $subject = trim($_POST['subject'] ?? '');
-            $content = trim($_POST['content'] ?? '');
-
-            if (empty($subject)) {
+            $subj = trim($_POST['subject'] ?? '');
+            $cont = trim($_POST['content'] ?? '');
+            if (!$subj) {
                 $_SESSION['error'] = 'Subject is required';
                 header("Location: /notes/edit/$id");
                 exit;
             }
-
-            if ($noteModel->updateNote($id, $user_id, $subject, $content)) {
-                $_SESSION['success'] = 'Reminder updated.';
+            if ($model->updateNote($id, $uid, $subj, $cont)) {
+                $_SESSION['success'] = 'Reminder updated';
                 header('Location: /notes');
                 exit;
-            } else {
-                $_SESSION['error'] = 'Failed to update reminder.';
-                header("Location: /notes/edit/$id");
-                exit;
             }
+            $_SESSION['error'] = 'Failed to update';
+            header("Location: /notes/edit/$id");
+            exit;
         }
 
-        // GET
-        $note = $noteModel->getNoteById($id, $user_id);
+        $note = $model->getNoteById($id, $uid);
         if (!$note) {
             header('Location: /notes');
             exit;
@@ -87,33 +70,20 @@ class Notes extends Controller {
         $this->view('notes/edit', ['note' => $note]);
     }
 
-    // Soft-delete
     public function delete($id) {
-        if (!isset($_SESSION['auth'])) {
-            header('Location: /login');
-            exit;
-        }
-        $noteModel = $this->model('Note');
-        $user_id   = $_SESSION['user_id'];
-
-        if ($noteModel->deleteNote($id, $user_id)) {
-            $_SESSION['success'] = 'Reminder deleted.';
-        } else {
-            $_SESSION['error'] = 'Failed to delete reminder.';
-        }
+        $uid   = $this->ensureLoggedIn();
+        $model = $this->model('Note');
+        $model->deleteNote($id, $uid)
+            ? $_SESSION['success'] = 'Deleted'
+            : $_SESSION['error']   = 'Delete failed';
         header('Location: /notes');
         exit;
     }
 
-    // Toggle completed flag
     public function toggle($id) {
-        if (!isset($_SESSION['auth'])) {
-            header('Location: /login');
-            exit;
-        }
-        $noteModel = $this->model('Note');
-        $user_id   = $_SESSION['user_id'];
-        $noteModel->toggleCompleted($id, $user_id);
+        $uid   = $this->ensureLoggedIn();
+        $model = $this->model('Note');
+        $model->toggleCompleted($id, $uid);
         header('Location: /notes');
         exit;
     }
