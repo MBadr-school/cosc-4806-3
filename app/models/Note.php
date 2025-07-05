@@ -1,7 +1,9 @@
 <?php
+
 class Note {
     public function __construct() {}
 
+    // fetch all non-deleted notes for this user
     public function getNotesByUser($user_id) {
         $db = db_connect();
         $stmt = $db->prepare("
@@ -16,6 +18,7 @@ class Note {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // fetch one note by id (and user)
     public function getNoteById($id, $user_id) {
         $db = db_connect();
         $stmt = $db->prepare("
@@ -31,6 +34,7 @@ class Note {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    // create a new note
     public function createNote($user_id, $subject, $content = '') {
         $db = db_connect();
         $stmt = $db->prepare("
@@ -43,6 +47,7 @@ class Note {
         return $stmt->execute();
     }
 
+    // update an existing note
     public function updateNote($id, $user_id, $subject, $content = '') {
         $db = db_connect();
         $stmt = $db->prepare("
@@ -59,6 +64,7 @@ class Note {
         return $stmt->execute();
     }
 
+    // soft-delete
     public function deleteNote($id, $user_id) {
         $db = db_connect();
         $stmt = $db->prepare("
@@ -72,6 +78,7 @@ class Note {
         return $stmt->execute();
     }
 
+    // toggle completed flag
     public function toggleCompleted($id, $user_id) {
         $db = db_connect();
         $stmt = $db->prepare("
