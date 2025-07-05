@@ -1,32 +1,30 @@
-<?php require 'app/views/templates/header.php'; ?>
+<?php require APPROOT.'/views/templates/header.php'; ?>
 
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h3>Edit Reminder</h3>
-                </div>
-                <div class="card-body">
-                    <form method="POST" action="/notes/edit/<?php echo $note['id']; ?>">
-                        <div class="mb-3">
-                            <label for="subject" class="form-label">Subject *</label>
-                            <input type="text" class="form-control" id="subject" name="subject" required 
-                                   value="<?php echo htmlspecialchars($note['subject']); ?>">
-                        </div>
-                        <div class="mb-3">
-                            <label for="content" class="form-label">Content (Optional)</label>
-                            <textarea class="form-control" id="content" name="content" rows="4"><?php echo htmlspecialchars($note['content']); ?></textarea>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <a href="/notes" class="btn btn-secondary">Cancel</a>
-                            <button type="submit" class="btn btn-primary">Update Reminder</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<h1>Edit Reminder</h1>
 
-<?php require 'app/views/templates/footer.php'; ?>
+<?php if(!empty($_SESSION['error'])): ?>
+  <div class="alert alert-danger"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
+<?php endif; ?>
+
+<form method="POST" action="/notes/edit/<?= $data['note']['id']; ?>">
+  <div class="mb-3">
+    <label class="form-label">Subject *</label>
+    <input
+      type="text"
+      name="subject"
+      class="form-control"
+      required
+      value="<?= htmlspecialchars($data['note']['subject']); ?>">
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Details</label>
+    <textarea
+      name="content"
+      class="form-control"
+      rows="4"><?= htmlspecialchars($data['note']['content']); ?></textarea>
+  </div>
+  <button class="btn btn-primary">Save</button>
+  <a href="/notes" class="btn btn-secondary">Cancel</a>
+</form>
+
+<?php require APPROOT.'/views/templates/footer.php'; ?>

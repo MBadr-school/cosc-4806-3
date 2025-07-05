@@ -1,54 +1,43 @@
-<?php require 'app/views/templates/header.php'; ?>
+<?php require APPROOT.'/views/templates/header.php'; ?>
 
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1>My Reminders</h1>
-                <a href="/notes/create" class="btn btn-primary">Create New Reminder</a>
-            </div>
+<h1>My Reminders</h1>
+<p><a href="/notes/create" class="btn btn-primary mb-3">Create New Reminder</a></p>
 
-            <?php if (isset($_SESSION['success'])): ?>
-                <div class="alert alert-success"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></div>
-            <?php endif; ?>
+<?php if(!empty($_SESSION['success'])): ?>
+  <div class="alert alert-success"><?= $_SESSION['success']; unset($_SESSION['success']); ?></div>
+<?php endif; ?>
 
-            <?php if (isset($_SESSION['error'])): ?>
-                <div class="alert alert-danger"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
-            <?php endif; ?>
+<?php if(!empty($_SESSION['error'])): ?>
+  <div class="alert alert-danger"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
+<?php endif; ?>
 
-            <?php if (empty($notes)): ?>
-                <div class="alert alert-info">No reminders yet. <a href="/notes/create">Create your first one!</a></div>
-            <?php else: ?>
-                <div class="row">
-                    <?php foreach ($notes as $note): ?>
-                        <div class="col-md-6 col-lg-4 mb-3">
-                            <div class="card <?php echo $note['completed'] ? 'border-success' : ''; ?>">
-                                <div class="card-body">
-                                    <h5 class="card-title <?php echo $note['completed'] ? 'text-decoration-line-through' : ''; ?>">
-                                        <?php echo htmlspecialchars($note['subject']); ?>
-                                    </h5>
-                                    <?php if (!empty($note['content'])): ?>
-                                        <p class="card-text"><?php echo htmlspecialchars($note['content']); ?></p>
-                                    <?php endif; ?>
-                                    <small class="text-muted">Created: <?php echo date('M j, Y', strtotime($note['created_at'])); ?></small>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="btn-group w-100" role="group">
-                                        <a href="/notes/edit/<?php echo $note['id']; ?>" class="btn btn-sm btn-outline-primary">Edit</a>
-                                        <a href="/notes/toggle/<?php echo $note['id']; ?>" class="btn btn-sm btn-outline-<?php echo $note['completed'] ? 'warning' : 'success'; ?>">
-                                            <?php echo $note['completed'] ? 'Undo' : 'Complete'; ?>
-                                        </a>
-                                        <a href="/notes/delete/<?php echo $note['id']; ?>" class="btn btn-sm btn-outline-danger" 
-                                           onclick="return confirm('Are you sure you want to delete this reminder?')">Delete</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-        </div>
-    </div>
-</div>
+<?php if (!empty($data['notes'])): ?>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Subject</th><th>Details</th><th>Created At</th><th>Done</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach($data['notes'] as $n): ?>
+        <tr>
+          <td><?= htmlspecialchars($n['subject']); ?></td>
+          <td><?= nl2br(htmlspecialchars($n['content'])); ?></td>
+          <td><?= date('Y-m-d H:i', strtotime($n['created_at'])); ?></td>
+          <td><?= $n['completed'] ? '✔' : '–'; ?></td>
+          <td>
+            <a href="/notes/edit/<?= $n['id']; ?>">Edit</a> |
+            <a href="/notes/toggle/<?= $n['id']; ?>">Toggle</a> |
+            <a href="/notes/delete/<?= $n['id']; ?>" onclick="return confirm('Delete?')">Delete</a>
+          </td>
+        </tr>
+      <?php endforeach; ?>
+    </tbody>
+  </table>
+<?php else: ?>
+  <div class="alert alert-info">
+    No reminders yet. <a href="/notes/create">Create your first one!</a>
+  </div>
+<?php endif; ?>
 
-<?php require 'app/views/templates/footer.php'; ?> 
+<?php require APPROOT.'/views/templates/footer.php'; ?>
