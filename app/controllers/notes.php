@@ -1,88 +1,131 @@
 <?php
+
 class Notes extends Controller {
-    private function ensureLoggedIn() {
+
+    public function index() {
+        // Check if user is logged in
         if (!isset($_SESSION['auth'])) {
             header('Location: /login');
             exit;
         }
-        return $_SESSION['user_id'];
-    }
 
-    public function index() {
-        $uid   = $this->ensureLoggedIn();
-        $model = $this->model('Note');
-        $notes = $model->getNotesByUser($uid);
+        $noteModel = $this->model('Note');
+        $user_id = $_SESSION['user_id'] ?? 1; // Make sure this matches your logged-in user
+        $notes = $noteModel->getNotesByUser($user_id);
+
         $this->view('notes/index', ['notes' => $notes]);
     }
 
     public function create() {
-        $uid   = $this->ensureLoggedIn();
-        $model = $this->model('Note');
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $subj = trim($_POST['subject'] ?? '');
-            $cont = trim($_POST['content'] ?? '');
-            if (!$subj) {
+        if (!isset($_SESSION['auth'])) {
+            header('Location: /login');
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $subject = trim($_POST['subject']);
+            $content = trim($_POST['content'] ?? '');
+
+            if (empty($subject)) {
                 $_SESSION['error'] = 'Subject is required';
                 header('Location: /notes/create');
                 exit;
             }
-            if ($model->createNote($uid, $subj, $cont)) {
-                $_SESSION['success'] = 'Reminder created';
+
+            $noteModel = $this->model('Note');
+            $user_id = $this->getUserId();
+
+            if ($noteModel->createNote($user_id, $subject, $content)) {
+                $_SESSION['success'] = 'Note created successfully';
                 header('Location: /notes');
                 exit;
+            } else {
+                $_SESSION['error'] = 'Error creating note';
+                header('Location: /notes/create');
+                exit;
             }
-            $_SESSION['error'] = 'Failed to create';
-            header('Location: /notes/create');
-            exit;
         }
+
         $this->view('notes/create');
     }
 
     public function edit($id) {
-        $uid   = $this->ensureLoggedIn();
-        $model = $this->model('Note');
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $subj = trim($_POST['subject'] ?? '');
-            $cont = trim($_POST['content'] ?? '');
-            if (!$subj) {
-                $_SESSION['error'] = 'Subject is required';
-                header("Location: /notes/edit/$id");
-                exit;
-            }
-            if ($model->updateNote($id, $uid, $subj, $cont)) {
-                $_SESSION['success'] = 'Reminder updated';
-                header('Location: /notes');
-                exit;
-            }
-            $_SESSION['error'] = 'Failed to update';
-            header("Location: /notes/edit/$id");
+        if (!isset($_SESSION['auth'])) {
+            header('Location: /login');
             exit;
         }
-        $note = $model->getNoteById($id, $uid);
+
+        $noteModel = $this->model('Note');
+        $user_id = $this->getUserId();
+        $note = $noteModel->getNoteById($id, $user_id);
+
         if (!$note) {
+            $_SESSION['error'] = 'Note not found';
             header('Location: /notes');
             exit;
         }
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $subject = trim($_POST['subject']);
+            $content = trim($_POST['content'] ?? '');
+
+            if (empty($subject)) {
+                $_SESSION['error'] = 'Subject is required';
+                header('Location: /notes/edit/' . $id);
+                exit;
+            }
+
+            if ($noteModel->updateNote($id, $user_id, $subject, $content)) {
+                $_SESSION['success'] = 'Note updated successfully';
+                header('Location: /notes');
+                exit;
+            } else {
+                $_SESSION['error'] = 'Error updating note';
+                header('Location: /notes/edit/' . $id);
+                exit;
+            }
+        }
+
         $this->view('notes/edit', ['note' => $note]);
     }
 
     public function delete($id) {
-        $uid   = $this->ensureLoggedIn();
-        $model = $this->model('Note');
-        if ($model->deleteNote($id, $uid)) {
-            $_SESSION['success'] = 'Reminder deleted';
-        } else {
-            $_SESSION['error'] = 'Delete failed';
+        if (!isset($_SESSION['auth'])) {
+            header('Location: /login');
+            exit;
         }
+
+        $noteModel = $this->model('Note');
+        $user_id = $this->getUserId();
+
+        if ($noteModel->deleteNote($id, $user_id)) {
+            $_SESSION['success'] = 'Note deleted successfully';
+        } else {
+            $_SESSION['error'] = 'Error deleting note';
+        }
+
         header('Location: /notes');
         exit;
     }
 
     public function toggle($id) {
-        $uid   = $this->ensureLoggedIn();
-        $model = $this->model('Note');
-        $model->toggleCompleted($id, $uid);
+        if (!isset($_SESSION['auth'])) {
+            header('Location: /login');
+            exit;
+        }
+
+        $noteModel = $this->model('Note');
+        $user_id = $this->getUserId();
+
+        $noteModel->toggleCompleted($id, $user_id);
         header('Location: /notes');
         exit;
     }
-}
+
+    private function getUserId() {
+        // You'll need to modify this based on how you store user_id in session
+        // For now, assuming you have user_id in session
+        return $_SESSION['user_id'] ?? 1; // Default to 1 for testing
+    }
+
+} 

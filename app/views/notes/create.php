@@ -1,24 +1,32 @@
-<?php require APPROOT.'/views/templates/header.php'; ?>
+<?php require 'app/views/templates/header.php'; ?>
 
-<h1>Create Reminder</h1>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Create New Reminder</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="/notes/create">
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject *</label>
+                            <input type="text" class="form-control" id="subject" name="subject" required 
+                                   value="<?php echo isset($_POST['subject']) ? htmlspecialchars($_POST['subject']) : ''; ?>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="content" class="form-label">Content (Optional)</label>
+                            <textarea class="form-control" id="content" name="content" rows="4"><?php echo isset($_POST['content']) ? htmlspecialchars($_POST['content']) : ''; ?></textarea>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <a href="/notes" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Create Reminder</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<?php if(!empty($_SESSION['error'])): ?>
-  <div class="alert alert-danger">
-    <?= $_SESSION['error']; unset($_SESSION['error']); ?>
-  </div>
-<?php endif; ?>
-
-<form action="/notes/create" method="post">
-  <div class="mb-3">
-    <label for="subject" class="form-label">Subject</label>
-    <input type="text" id="subject" name="subject" class="form-control" required>
-  </div>
-  <div class="mb-3">
-    <label for="content" class="form-label">Details</label>
-    <textarea id="content" name="content" class="form-control" rows="4"></textarea>
-  </div>
-  <button type="submit" class="btn btn-success">Create</button>
-  <a href="/notes" class="btn btn-secondary">Cancel</a>
-</form>
-
-<?php require APPROOT.'/views/templates/footer.php'; ?>
+<?php require 'app/views/templates/footer.php'; ?> 
