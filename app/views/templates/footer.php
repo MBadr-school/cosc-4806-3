@@ -72,7 +72,7 @@
                 <div class="col-md-8">
                     <p class="text-muted mb-0">
                         &copy; <?= date('Y'); ?> ReminderApp. All rights reserved. 
-                        <span class="d-none d-md-inline">Built by Badr with</span>
+                        <span class="d-none d-md-inline">Built by Badr</span>
                     </p>
                 </div>
                 <div class="col-md-4 text-md-end">
