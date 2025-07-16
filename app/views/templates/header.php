@@ -64,7 +64,7 @@ if (!isset($_SESSION['auth'])) {
         }
 
         .navbar-nav .dropdown-item {
-            color: #ecf0f1;
+            color: #000000;
             padding: 0.75rem 1.5rem;
             font-weight: 500;
             transition: all 0.3s ease;
@@ -211,7 +211,7 @@ if (!isset($_SESSION['auth'])) {
         .navbar-dark .navbar-nav .dropdown-header,
         .navbar-dark .navbar-nav .nav-link i,
         .navbar-dark .navbar-nav .dropdown-item i {
-          color: #fff !important;
+          color: #000000 !important;
         }
     </style>
 </head>
