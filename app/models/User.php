@@ -38,6 +38,11 @@ class User {
       if ($lockInfo['bad_count'] >= 3) {
           $elapsed = time() - strtotime($lockInfo['last_bad']);
           $wait    = 60 - $elapsed;
+          $_SESSION['toast'] = [
+              'type' => 'error',
+              'title' => 'Account Locked',
+              'message' => "Too many failed attempts. Try again in {$wait}s."
+          ];
           $_SESSION['login_error'] = "Too many failed attempts. Try again in {$wait}s.";
           header('Location: /login');
           exit;
@@ -66,10 +71,36 @@ class User {
           $_SESSION['auth']     = 1;
           $_SESSION['username'] = ucwords($username);
           $_SESSION['user_id'] = $row['id'];
+
+          // Set success toast
+          $_SESSION['toast'] = [
+              'type' => 'success',
+              'title' => 'Welcome Back!',
+              'message' => 'You have successfully logged in.'
+          ];
+
+          // Check for intended URL (for redirects after login)
+          if (isset($_SESSION['intended_url']) && !empty($_SESSION['intended_url'])) {
+              $intendedUrl = $_SESSION['intended_url'];
+              unset($_SESSION['intended_url']); // Clear it after use
+
+              // Ensure the intended URL is safe (prevent open redirects)
+              if (strpos($intendedUrl, '/') === 0 && !preg_match('/^\/\//', $intendedUrl)) {
+                  header('Location: ' . $intendedUrl);
+                  exit;
+              }
+          }
+
           header('Location: /home');
           exit;
       }
 
+      // Set error toast
+      $_SESSION['toast'] = [
+          'type' => 'error',
+          'title' => 'Login Failed',
+          'message' => 'Invalid username or password.'
+      ];
       $_SESSION['login_error'] = 'Invalid username or password.';
       header('Location: /login');
       exit;
@@ -86,6 +117,11 @@ class User {
         $stmt->bindValue(':username', $username);
         $stmt->execute();
         if ($stmt->fetch()) {
+            $_SESSION['toast'] = [
+                'type' => 'error',
+                'title' => 'Registration Failed',
+                'message' => 'Username already taken.'
+            ];
             return "Username already taken.";
         }
 
@@ -95,8 +131,18 @@ class User {
         $insert->bindValue(':username', $username);
         $insert->bindValue(':password', $hashedPassword);
         if ($insert->execute()) {
+            $_SESSION['toast'] = [
+                'type' => 'success',
+                'title' => 'Account Created!',
+                'message' => 'Your account has been created successfully. You can now log in.'
+            ];
             return "Account created successfully.";
         } else {
+            $_SESSION['toast'] = [
+                'type' => 'error',
+                'title' => 'Registration Failed',
+                'message' => 'Error creating account. Please try again.'
+            ];
             return "Error creating account.";
         }
     }
