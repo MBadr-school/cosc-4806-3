@@ -1,6 +1,6 @@
 </main>
 
-    <footer class="bg-dark text-light py-5 mt-5">
+    <footer class="py-5 mt-5">
         <div class="container">
             <div class="row">
                 <div class="col-md-4 mb-4">
@@ -8,41 +8,21 @@
                         <i class="fas fa-clipboard-list me-2"></i>
                         ReminderApp
                     </h5>
-                    <p class="text-muted">Stay organized and never miss important tasks with our intuitive reminder system. Simple, secure, and always available.</p>
-                    <div class="d-flex">
-                        <a href="#" class="text-muted me-3" title="Facebook">
+                    <p class="text-muted">Stay organized and never miss important tasks. Simple, secure, and always available.</p>
+                    <div class="d-flex social-icons">
+                        <a href="#" class="me-3" title="Facebook">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="#" class="text-muted me-3" title="Twitter">
+                        <a href="#" class="me-3" title="Twitter">
                             <i class="fab fa-twitter"></i>
                         </a>
-                        <a href="#" class="text-muted me-3" title="LinkedIn">
+                        <a href="#" class="me-3" title="LinkedIn">
                             <i class="fab fa-linkedin-in"></i>
                         </a>
-                        <a href="#" class="text-muted" title="Instagram">
+                        <a href="#" class="" title="Instagram">
                             <i class="fab fa-instagram"></i>
                         </a>
                     </div>
-                </div>
-
-                <div class="col-md-2 mb-4">
-                    <h6 class="text-uppercase fw-bold mb-3">Product</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="#features" class="text-muted text-decoration-none">Features</a></li>
-                        <li><a href="#pricing" class="text-muted text-decoration-none">Pricing</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">Mobile App</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">Integrations</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-md-2 mb-4">
-                    <h6 class="text-uppercase fw-bold mb-3">Company</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="#about" class="text-muted text-decoration-none">About Us</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">Careers</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">Blog</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">Press</a></li>
-                    </ul>
                 </div>
 
                 <div class="col-md-2 mb-4">
@@ -50,8 +30,6 @@
                     <ul class="list-unstyled">
                         <li><a href="#" class="text-muted text-decoration-none">Help Center</a></li>
                         <li><a href="#" class="text-muted text-decoration-none">Contact Us</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">API Docs</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">Status</a></li>
                     </ul>
                 </div>
 
@@ -60,8 +38,6 @@
                     <ul class="list-unstyled">
                         <li><a href="#" class="text-muted text-decoration-none">Privacy Policy</a></li>
                         <li><a href="#" class="text-muted text-decoration-none">Terms of Service</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">Cookie Policy</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">GDPR</a></li>
                     </ul>
                 </div>
             </div>
@@ -71,14 +47,14 @@
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <p class="text-muted mb-0">
-                        &copy; <?= date('Y'); ?> ReminderApp. All rights reserved. 
+                        © <?= date('Y'); ?> ReminderApp. All rights reserved. 
                         <span class="d-none d-md-inline">Built by Badr</span>
                     </p>
                 </div>
                 <div class="col-md-4 text-md-end">
                     <p class="text-muted mb-0">
                         <i class="fas fa-envelope me-1"></i>
-                        <a href="mailto:support@reminderapp.com" class="text-muted text-decoration-none">Badar@reminderapp.com</a>
+                        <a href="mailto:support@reminderapp.com" class="text-muted text-decoration-none">mbadr@algomau.ca</a>
                     </p>
                 </div>
             </div>
@@ -86,6 +62,42 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <style>
+      /* Footer styles */
+      footer {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        color: #09194D;
+      }
+      footer h5, footer h6 {
+        color: #09194D;
+        font-weight: 600;
+      }
+      footer p.text-muted {
+        color: #6c757d !important;
+      }
+      footer a.text-muted {
+        color: #09194D !important;
+        transition: all 0.3s ease;
+      }
+      footer a.text-muted:hover {
+        color: #0a2b7a !important;
+        text-decoration: none;
+        transform: translateX(2px);
+      }
+      footer .social-icons a {
+        color: #09194D;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+      }
+      footer .social-icons a:hover {
+        color: #0a2b7a;
+        transform: translateY(-2px);
+      }
+      footer hr {
+        border-color: #dee2e6;
+      }
+    </style>
 
     <script>
         // Toast Functionality
@@ -284,5 +296,3 @@
     </script>
 </body>
 </html>
-
-
